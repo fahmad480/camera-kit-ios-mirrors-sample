@@ -22,31 +22,65 @@ public class PreviewViewController: UIViewController {
         return button
     }()
 
-    fileprivate let saveButton: UIButton = {
+    fileprivate let uploadButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "ck_save", in: BundleHelper.resourcesBundle, compatibleWith: nil), for: .normal)
+        button.setTitle("Upload", for: .normal)
+        button.backgroundColor = .systemBlue
+        button.layer.cornerRadius = 8
         button.translatesAutoresizingMaskIntoConstraints = false
-
         return button
     }()
 
-    fileprivate let shareButton: UIButton = {
+    fileprivate let cancelButton: UIButton = {
         let button = UIButton()
-        button.accessibilityIdentifier = PreviewElements.shareButton.id
-        button.setImage(UIImage(named: "ck_share", in: BundleHelper.resourcesBundle, compatibleWith: nil), for: .normal)
+        button.setTitle("Cancel", for: .normal)
+        button.backgroundColor = .systemGray
+        button.layer.cornerRadius = 8
         button.translatesAutoresizingMaskIntoConstraints = false
-
         return button
     }()
 
-    fileprivate lazy var bottomButtonStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [saveButton, shareButton])
+    fileprivate let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .white
+        indicator.isHidden = true
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+
+    fileprivate let overlayView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        view.alpha = 0.7
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    fileprivate let qrCodeImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+
+    fileprivate let qrCodeCloseButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        button.tintColor = .white
+        button.isHidden = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    fileprivate lazy var uploadButtonStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [uploadButton, cancelButton])
         stackView.alignment = .center
         stackView.axis = .horizontal
-        stackView.distribution = .fill
-        stackView.spacing = 20.0
+        stackView.distribution = .fillEqually
+        stackView.spacing = 16.0
         stackView.translatesAutoresizingMaskIntoConstraints = false
-
         return stackView
     }()
 
@@ -60,17 +94,30 @@ public class PreviewViewController: UIViewController {
     private func setup() {
         view.backgroundColor = .black
         setupCloseButton()
-        setupBottomButtonBar()
+        setupUploadButtons()
+        setupLoadingIndicator()
+        setupOverlayView()
+        setupQRCodeView()
     }
 
     // MARK: Overridable Actions
 
-    func savePreview() {
-        fatalError("save preview action has to be implemented by subclass")
+    func uploadPreview() {
+        fatalError("upload preview action has to be implemented by subclass")
     }
 
-    func sharePreview() {
-        fatalError("share preview action has to be implemented by subclass")
+    func showLoading() {
+        loadingIndicator.isHidden = false
+        loadingIndicator.startAnimating()
+        uploadButtonStackView.isHidden = true
+        overlayView.isHidden = true
+    }
+
+    func hideLoading() {
+        loadingIndicator.isHidden = true
+        loadingIndicator.stopAnimating()
+        uploadButtonStackView.isHidden = false
+        overlayView.isHidden = true
     }
 }
 
@@ -92,33 +139,91 @@ extension PreviewViewController {
     }
 }
 
-// MARK: Bottom Button Bar
+// MARK: Upload Buttons
 
 extension PreviewViewController {
-    fileprivate func setupBottomButtonBar() {
-        saveButton.addTarget(self, action: #selector(self.savePreviewPressed(_:)), for: .touchUpInside)
-        shareButton.addTarget(self, action: #selector(self.sharePreviewPressed(_:)), for: .touchUpInside)
-        view.addSubview(bottomButtonStackView)
+    fileprivate func setupUploadButtons() {
+        uploadButton.addTarget(self, action: #selector(uploadButtonPressed(_:)), for: .touchUpInside)
+        cancelButton.addTarget(self, action: #selector(cancelButtonPressed(_:)), for: .touchUpInside)
+        view.addSubview(uploadButtonStackView)
         NSLayoutConstraint.activate([
-            bottomButtonStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16.0),
-            bottomButtonStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -32.0),
+            uploadButtonStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            uploadButtonStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -32.0),
+            uploadButtonStackView.widthAnchor.constraint(equalToConstant: 256),
+            uploadButtonStackView.heightAnchor.constraint(equalToConstant: 44),
         ])
     }
 
-    @objc private func savePreviewPressed(_ sender: UIButton) {
-        guard PHPhotoLibrary.authorizationStatus() == .authorized else {
-            PHPhotoLibrary.requestAuthorization { status in
-                guard status == .authorized else { return }
-                self.savePreview()
-            }
-
-            return
-        }
-
-        savePreview()
+    @objc private func uploadButtonPressed(_ sender: UIButton) {
+        uploadPreview()
     }
 
-    @objc private func sharePreviewPressed(_ sender: UIButton) {
-        sharePreview()
+    @objc private func cancelButtonPressed(_ sender: UIButton) {
+        onDismiss?()
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+// MARK: Loading Indicator
+
+extension PreviewViewController {
+    fileprivate func setupLoadingIndicator() {
+        view.addSubview(loadingIndicator)
+        NSLayoutConstraint.activate([
+            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        ])
+    }
+}
+
+// MARK: Overlay View
+
+extension PreviewViewController {
+    fileprivate func setupOverlayView() {
+        view.addSubview(overlayView)
+        NSLayoutConstraint.activate([
+            overlayView.topAnchor.constraint(equalTo: view.topAnchor),
+            overlayView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlayView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            overlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+}
+
+// MARK: QR Code View
+
+extension PreviewViewController {
+    fileprivate func setupQRCodeView() {
+        view.addSubview(qrCodeImageView)
+        view.addSubview(qrCodeCloseButton)
+        
+        NSLayoutConstraint.activate([
+            qrCodeImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            qrCodeImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            qrCodeImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7),
+            qrCodeImageView.heightAnchor.constraint(equalTo: qrCodeImageView.widthAnchor),
+            
+            qrCodeCloseButton.topAnchor.constraint(equalTo: qrCodeImageView.bottomAnchor, constant: 16),
+            qrCodeCloseButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            qrCodeCloseButton.widthAnchor.constraint(equalToConstant: 44),
+            qrCodeCloseButton.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        
+        qrCodeCloseButton.addTarget(self, action: #selector(qrCodeCloseButtonPressed(_:)), for: .touchUpInside)
+    }
+    
+    @objc private func qrCodeCloseButtonPressed(_ sender: UIButton) {
+        qrCodeImageView.isHidden = true
+        qrCodeCloseButton.isHidden = true
+        overlayView.isHidden = true
+        uploadButtonStackView.isHidden = false
+    }
+    
+    func showQRCode(_ qrCodeImage: UIImage) {
+        qrCodeImageView.image = qrCodeImage
+        qrCodeImageView.isHidden = false
+        qrCodeCloseButton.isHidden = false
+        overlayView.isHidden = false
+        uploadButtonStackView.isHidden = true
     }
 }
