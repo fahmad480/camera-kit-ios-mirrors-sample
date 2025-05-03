@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0FF07EC923D79DC400CFFA3F"
-               BuildableName = "CameraKitAlternateCarouselSample.app"
-               BlueprintName = "CameraKitAlternateCarouselSample"
-               ReferencedContainer = "container:CameraKitAlternateCarouselSample.xcodeproj">
+               BuildableName = "Sample Mirror.app"
+               BlueprintName = "Sample Mirror"
+               ReferencedContainer = "container:Sample Mirror.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,9 +35,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0FF07EDF23D79DC500CFFA3F"
-               BuildableName = "CameraKitAlternateCarouselSampleTests.xctest"
-               BlueprintName = "CameraKitAlternateCarouselSampleTests"
-               ReferencedContainer = "container:CameraKitAlternateCarouselSample.xcodeproj">
+               BuildableName = "Sample MirrorTests.xctest"
+               BlueprintName = "Sample MirrorTests"
+               ReferencedContainer = "container:Sample Mirror.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -45,9 +45,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0FF07EEA23D79DC500CFFA3F"
-               BuildableName = "CameraKitAlternateCarouselSampleUITests.xctest"
-               BlueprintName = "CameraKitAlternateCarouselSampleUITests"
-               ReferencedContainer = "container:CameraKitAlternateCarouselSample.xcodeproj">
+               BuildableName = "Sample MirrorUITests.xctest"
+               BlueprintName = "Sample MirrorUITests"
+               ReferencedContainer = "container:Sample Mirror.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -68,9 +68,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0FF07EC923D79DC400CFFA3F"
-            BuildableName = "CameraKitAlternateCarouselSample.app"
-            BlueprintName = "CameraKitAlternateCarouselSample"
-            ReferencedContainer = "container:CameraKitAlternateCarouselSample.xcodeproj">
+            BuildableName = "Sample Mirror.app"
+            BlueprintName = "Sample Mirror"
+            ReferencedContainer = "container:Sample Mirror.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -85,9 +85,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0FF07EC923D79DC400CFFA3F"
-            BuildableName = "CameraKitAlternateCarouselSample.app"
-            BlueprintName = "CameraKitAlternateCarouselSample"
-            ReferencedContainer = "container:CameraKitAlternateCarouselSample.xcodeproj">
+            BuildableName = "Sample Mirror.app"
+            BlueprintName = "Sample Mirror"
+            ReferencedContainer = "container:Sample Mirror.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

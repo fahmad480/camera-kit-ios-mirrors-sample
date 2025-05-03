@@ -9,7 +9,7 @@ import SCSDKCreativeKit
 class AppDelegate: UIResponder, UIApplicationDelegate, SnapchatDelegate {
 
     private enum Constants {
-        static let partnerGroupId = "d8977df5-afbc-429a-bd6f-65945908d392"
+        static let partnerGroupId = "845fe30b-b436-42a7-be3c-2da1c3390aa6"
     }
 
     var window: UIWindow?
@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SnapchatDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
-        cameraController.groupIDs = [Constants.partnerGroupId]
+        cameraController.groupIDs = [SCCameraKitLensRepositoryBundledGroup, Constants.partnerGroupId]
         if #available(iOS 13.0, *) {
             window?.overrideUserInterfaceStyle = .dark
         }
