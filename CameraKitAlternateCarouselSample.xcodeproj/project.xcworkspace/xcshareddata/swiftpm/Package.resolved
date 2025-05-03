@@ -1,0 +1,24 @@
+{
+  "originHash" : "aa0692cbab5a4bbd8395c36382c95b37629ed6beaef8a6f49ac5fefe0689e8d2",
+  "pins" : [
+    {
+      "identity" : "camera-kit-ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Snapchat/camera-kit-ios-sdk",
+      "state" : {
+        "revision" : "96ab6f70cec2ce068ed1fb3c481cf15dc67db84c",
+        "version" : "1.37.0"
+      }
+    },
+    {
+      "identity" : "snap-kit-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Snapchat/snap-kit-spm",
+      "state" : {
+        "revision" : "6c44e89e330e8b37ea3f7405d75c9a161d4f8281",
+        "version" : "2.5.0"
+      }
+    }
+  ],
+  "version" : 3
+}

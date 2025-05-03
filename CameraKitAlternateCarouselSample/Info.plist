@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string></string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>camerakitsample</string>
+				<string>camerakitsandbox</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>camerakitsample</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>snapchat</string>
+	</array>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>CameraKit Sample app uses the camera to show lenses</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>CameraKit Sample uses your location for location-aware lenses.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>CameraKit Sample app uses the microphone to process and record audio</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>CameraKit Sample uses photo library to save captured photos and recorded videos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>CameraKit Sample uses photo library to save captured photos and recorded videos</string>
+	<key>SCCameraKitAPIToken</key>
+	<string>eyJhbGciOiJIUzI1NiIsImtpZCI6IkNhbnZhc1MyU0hNQUNQcm9kIiwidHlwIjoiSldUIn0.eyJhdWQiOiJjYW52YXMtY2FudmFzYXBpIiwiaXNzIjoiY2FudmFzLXMyc3Rva2VuIiwibmJmIjoxNzQ0Nzc3NzQyLCJzdWIiOiIzNmE0OGU4NC01YWQxLTRlYTQtODg4MS1iYmQ5YTQwNGViZWJ-UFJPRFVDVElPTn5kYmE2MjIxMi0xMjcwLTRkY2YtOTkwOS01MGJhMDYzYzhiODAifQ.cHps7w9NSX3tf4w29Zyy2aUh7Kt_xUHeE78U2dxZM1w</string>
+	<key>SCSDKClientId</key>
+	<string>eba35735-6131-4ba2-93e1-ff700f99f3b9</string>
+	<key>SCSDKRedirectUrl</key>
+	<string>templatetestapp://snap-kit/oauth2</string>
+	<key>SCSDKScopes</key>
+	<array>
+		<string>https://auth.snapchat.com/oauth2/api/camkit_lens_push_to_device</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UILaunchToFullScreenByDefaultOnMac</key>
+	<true/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportsTrueScreenSizeOnMac</key>
+	<true/>
+</dict>
+</plist>
