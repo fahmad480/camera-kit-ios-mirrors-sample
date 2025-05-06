@@ -612,3 +612,29 @@ extension CameraViewController {
         }
     }
 }
+
+// MARK: Keyboard Control
+extension CameraViewController {
+    public override var keyCommands: [UIKeyCommand]? {
+        return [
+            UIKeyCommand(input: "n", modifierFlags: [], action: #selector(handlePhotoKey(_:))),
+            UIKeyCommand(input: "m", modifierFlags: [], action: #selector(handleRecordKey(_:)))
+        ]
+    }
+    
+    @objc private func handlePhotoKey(_ sender: UIKeyCommand) {
+        // Take photo
+        cameraButtonTapped(cameraView.cameraButton)
+    }
+    
+    @objc private func handleRecordKey(_ sender: UIKeyCommand) {
+        // Toggle recording
+        if cameraController.recorder != nil {
+            // If recording, stop it
+            cameraButtonHoldEnded(cameraView.cameraButton)
+        } else {
+            // If not recording, start it
+            cameraButtonHoldBegan(cameraView.cameraButton)
+        }
+    }
+}
