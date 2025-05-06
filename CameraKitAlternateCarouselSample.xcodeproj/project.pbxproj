@@ -66,13 +66,13 @@
 		0F16357823F1E30900DA79A0 /* ApplicationInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationInfo.swift; sourceTree = "<group>"; };
 		0F3A1CE0242C30B000CADA27 /* lens_icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lens_icons; sourceTree = "<group>"; };
 		0F5219212832D18C00CFDC26 /* CatFactLensRemoteApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatFactLensRemoteApi.swift; sourceTree = "<group>"; };
-		0FF07ECA23D79DC400CFFA3F /* Sample Mirror.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Sample Mirror.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FF07ECA23D79DC400CFFA3F /* Firaga Mirror.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Firaga Mirror.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF07ECD23D79DC400CFFA3F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0FF07ED623D79DC500CFFA3F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0FF07ED923D79DC500CFFA3F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0FF07EDB23D79DC500CFFA3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0FF07EE023D79DC500CFFA3F /* Sample MirrorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Sample MirrorTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0FF07EEB23D79DC500CFFA3F /* Sample MirrorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Sample MirrorUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FF07EE023D79DC500CFFA3F /* Firaga MirrorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Firaga MirrorTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FF07EEB23D79DC500CFFA3F /* Firaga MirrorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Firaga MirrorUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF07F0123D7BFC100CFFA3F /* lenses */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lenses; sourceTree = "<group>"; };
 		1B0D01D42D3AD0080052D621 /* MirrorAVSessionInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirrorAVSessionInput.swift; sourceTree = "<group>"; };
 		A61C11FE28DD1ADE00F36769 /* CameraButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraButton.swift; sourceTree = "<group>"; };
@@ -151,9 +151,9 @@
 		0FF07ECB23D79DC400CFFA3F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0FF07ECA23D79DC400CFFA3F /* Sample Mirror.app */,
-				0FF07EE023D79DC500CFFA3F /* Sample MirrorTests.xctest */,
-				0FF07EEB23D79DC500CFFA3F /* Sample MirrorUITests.xctest */,
+				0FF07ECA23D79DC400CFFA3F /* Firaga Mirror.app */,
+				0FF07EE023D79DC500CFFA3F /* Firaga MirrorTests.xctest */,
+				0FF07EEB23D79DC500CFFA3F /* Firaga MirrorUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -322,9 +322,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0FF07EC923D79DC400CFFA3F /* Sample Mirror */ = {
+		0FF07EC923D79DC400CFFA3F /* Firaga Mirror */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0FF07EF423D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Sample Mirror" */;
+			buildConfigurationList = 0FF07EF423D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Firaga Mirror" */;
 			buildPhases = (
 				0FF07EC623D79DC400CFFA3F /* Sources */,
 				0FF07EC723D79DC400CFFA3F /* Frameworks */,
@@ -334,18 +334,18 @@
 			);
 			dependencies = (
 			);
-			name = "Sample Mirror";
+			name = "Firaga Mirror";
 			packageProductDependencies = (
 				1B0D01D72D3AD0F20052D621 /* SCSDKCameraKit */,
 				1B0D01DB2D3AD13A0052D621 /* SnapSDK */,
 			);
 			productName = CameraKitSample;
-			productReference = 0FF07ECA23D79DC400CFFA3F /* Sample Mirror.app */;
+			productReference = 0FF07ECA23D79DC400CFFA3F /* Firaga Mirror.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0FF07EDF23D79DC500CFFA3F /* Sample MirrorTests */ = {
+		0FF07EDF23D79DC500CFFA3F /* Firaga MirrorTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0FF07EF723D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Sample MirrorTests" */;
+			buildConfigurationList = 0FF07EF723D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Firaga MirrorTests" */;
 			buildPhases = (
 				0FF07EDC23D79DC500CFFA3F /* Sources */,
 				0FF07EDD23D79DC500CFFA3F /* Frameworks */,
@@ -356,14 +356,14 @@
 			dependencies = (
 				0FF07EE223D79DC500CFFA3F /* PBXTargetDependency */,
 			);
-			name = "Sample MirrorTests";
+			name = "Firaga MirrorTests";
 			productName = CameraKitSampleTests;
-			productReference = 0FF07EE023D79DC500CFFA3F /* Sample MirrorTests.xctest */;
+			productReference = 0FF07EE023D79DC500CFFA3F /* Firaga MirrorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		0FF07EEA23D79DC500CFFA3F /* Sample MirrorUITests */ = {
+		0FF07EEA23D79DC500CFFA3F /* Firaga MirrorUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0FF07EFA23D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Sample MirrorUITests" */;
+			buildConfigurationList = 0FF07EFA23D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Firaga MirrorUITests" */;
 			buildPhases = (
 				0FF07EE723D79DC500CFFA3F /* Sources */,
 				0FF07EE823D79DC500CFFA3F /* Frameworks */,
@@ -374,9 +374,9 @@
 			dependencies = (
 				0FF07EED23D79DC500CFFA3F /* PBXTargetDependency */,
 			);
-			name = "Sample MirrorUITests";
+			name = "Firaga MirrorUITests";
 			productName = CameraKitSampleUITests;
-			productReference = 0FF07EEB23D79DC500CFFA3F /* Sample MirrorUITests.xctest */;
+			productReference = 0FF07EEB23D79DC500CFFA3F /* Firaga MirrorUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -387,7 +387,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
 				LastUpgradeCheck = 1130;
-				ORGANIZATIONNAME = Snap;
+				ORGANIZATIONNAME = FiragaStudio;
 				TargetAttributes = {
 					0FF07EC923D79DC400CFFA3F = {
 						CreatedOnToolsVersion = 11.3.1;
@@ -402,7 +402,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 0FF07EC523D79DC400CFFA3F /* Build configuration list for PBXProject "Sample Mirror" */;
+			buildConfigurationList = 0FF07EC523D79DC400CFFA3F /* Build configuration list for PBXProject "CameraKitAlternateCarouselSample" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -419,9 +419,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0FF07EC923D79DC400CFFA3F /* Sample Mirror */,
-				0FF07EDF23D79DC500CFFA3F /* Sample MirrorTests */,
-				0FF07EEA23D79DC500CFFA3F /* Sample MirrorUITests */,
+				0FF07EC923D79DC400CFFA3F /* Firaga Mirror */,
+				0FF07EDF23D79DC500CFFA3F /* Firaga MirrorTests */,
+				0FF07EEA23D79DC500CFFA3F /* Firaga MirrorUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -511,12 +511,12 @@
 /* Begin PBXTargetDependency section */
 		0FF07EE223D79DC500CFFA3F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0FF07EC923D79DC400CFFA3F /* Sample Mirror */;
+			target = 0FF07EC923D79DC400CFFA3F /* Firaga Mirror */;
 			targetProxy = 0FF07EE123D79DC500CFFA3F /* PBXContainerItemProxy */;
 		};
 		0FF07EED23D79DC500CFFA3F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0FF07EC923D79DC400CFFA3F /* Sample Mirror */;
+			target = 0FF07EC923D79DC400CFFA3F /* Firaga Mirror */;
 			targetProxy = 0FF07EEC23D79DC500CFFA3F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -598,7 +598,7 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = CameraKitAlternateCarouselSample/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Sample Mirror";
+				INFOPLIST_KEY_CFBundleDisplayName = "Firaga Mirror";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -606,7 +606,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = id.faraaz.samplemirror;
+				PRODUCT_BUNDLE_IDENTIFIER = com.firagastudio.mirror;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -632,7 +632,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sample Mirror.app/Sample Mirror";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Firaga Mirror.app/Firaga Mirror";
 			};
 			name = Enterprise;
 		};
@@ -780,7 +780,7 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = CameraKitAlternateCarouselSample/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Sample Mirror";
+				INFOPLIST_KEY_CFBundleDisplayName = "Firaga Mirror";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -788,7 +788,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = id.faraaz.samplemirror;
+				PRODUCT_BUNDLE_IDENTIFIER = com.firagastudio.mirror;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
@@ -807,7 +807,7 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = CameraKitAlternateCarouselSample/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Sample Mirror";
+				INFOPLIST_KEY_CFBundleDisplayName = "Firaga Mirror";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -815,7 +815,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = id.faraaz.samplemirror;
+				PRODUCT_BUNDLE_IDENTIFIER = com.firagastudio.mirror;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -841,7 +841,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sample Mirror.app/Sample Mirror";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Firaga Mirror.app/Firaga Mirror";
 			};
 			name = Debug;
 		};
@@ -863,7 +863,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sample Mirror.app/Sample Mirror";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Firaga Mirror.app/Firaga Mirror";
 			};
 			name = Release;
 		};
@@ -910,7 +910,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0FF07EC523D79DC400CFFA3F /* Build configuration list for PBXProject "Sample Mirror" */ = {
+		0FF07EC523D79DC400CFFA3F /* Build configuration list for PBXProject "CameraKitAlternateCarouselSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0FF07EF223D79DC500CFFA3F /* Debug */,
@@ -920,7 +920,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0FF07EF423D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Sample Mirror" */ = {
+		0FF07EF423D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Firaga Mirror" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0FF07EF523D79DC500CFFA3F /* Debug */,
@@ -930,7 +930,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0FF07EF723D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Sample MirrorTests" */ = {
+		0FF07EF723D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Firaga MirrorTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0FF07EF823D79DC500CFFA3F /* Debug */,
@@ -940,7 +940,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0FF07EFA23D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Sample MirrorUITests" */ = {
+		0FF07EFA23D79DC500CFFA3F /* Build configuration list for PBXNativeTarget "Firaga MirrorUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0FF07EFB23D79DC500CFFA3F /* Debug */,

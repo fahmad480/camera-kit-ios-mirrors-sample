@@ -132,6 +132,7 @@ public class LensPickerView: UIView, UICollectionViewDataSource, UICollectionVie
     /// To be called the first time a filter is applied.
     /// - Parameter indexPath: The index path of the color cell to initially select.
     public func performInitialSelection(indexPath: IndexPath = IndexPath(row: 0, section: 0)) {
+        guard items.count > 0 else { return }
         collectionView(collectionView, didSelectItemAt: indexPath)
     }
 
