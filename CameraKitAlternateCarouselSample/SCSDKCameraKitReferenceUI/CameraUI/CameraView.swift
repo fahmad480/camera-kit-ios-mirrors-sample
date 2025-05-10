@@ -49,20 +49,22 @@ open class CameraView: UIView {
     }()
 
     /// Debug button for frame orientation
-    public lazy var frameOrientationButton: UIButton = {
+    public let frameOrientationButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Frame: Portrait", for: .normal)
-        button.backgroundColor = .systemBlue
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
         button.layer.cornerRadius = 8
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
     /// Debug button for video orientation
-    public lazy var videoOrientationButton: UIButton = {
+    public let videoOrientationButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Video: LandscapeLeft", for: .normal)
-        button.backgroundColor = .systemGreen
+        button.setTitle("Video: Portrait", for: .normal)
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
         button.layer.cornerRadius = 8
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -127,6 +129,17 @@ open class CameraView: UIView {
         return view
     }()
 
+    /// Mirror button
+    public let mirrorButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Mirror: On", for: .normal)
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
+        button.layer.cornerRadius = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     public override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -171,17 +184,23 @@ extension CameraView {
     private func setupDebugButtons() {
         addSubview(frameOrientationButton)
         addSubview(videoOrientationButton)
-        
+        addSubview(mirrorButton)
+
         NSLayoutConstraint.activate([
-            frameOrientationButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
             frameOrientationButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            frameOrientationButton.bottomAnchor.constraint(equalTo: cameraButton.topAnchor, constant: -16),
             frameOrientationButton.widthAnchor.constraint(equalToConstant: 150),
-            frameOrientationButton.heightAnchor.constraint(equalToConstant: 40),
-            
-            videoOrientationButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
+            frameOrientationButton.heightAnchor.constraint(equalToConstant: 44),
+
             videoOrientationButton.leadingAnchor.constraint(equalTo: frameOrientationButton.trailingAnchor, constant: 16),
+            videoOrientationButton.bottomAnchor.constraint(equalTo: cameraButton.topAnchor, constant: -16),
             videoOrientationButton.widthAnchor.constraint(equalToConstant: 150),
-            videoOrientationButton.heightAnchor.constraint(equalToConstant: 40)
+            videoOrientationButton.heightAnchor.constraint(equalToConstant: 44),
+
+            mirrorButton.leadingAnchor.constraint(equalTo: videoOrientationButton.trailingAnchor, constant: 16),
+            mirrorButton.bottomAnchor.constraint(equalTo: cameraButton.topAnchor, constant: -16),
+            mirrorButton.widthAnchor.constraint(equalToConstant: 100),
+            mirrorButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
 

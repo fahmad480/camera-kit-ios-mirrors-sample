@@ -7,6 +7,7 @@ public class MirrorAVSessionInput: NSObject, Input {
     public private(set) var frameSize: CGSize
     public private(set) var frameOrientation: AVCaptureVideoOrientation
     public private(set) var videoOrientation: AVCaptureVideoOrientation
+    public private(set) var isVideoMirrored: Bool
     public var position: AVCaptureDevice.Position {
         didSet {
             guard position != oldValue else { return }
@@ -34,7 +35,6 @@ public class MirrorAVSessionInput: NSObject, Input {
     public var horizontalFieldOfView: CGFloat { fieldOfView }
 
     private var fieldOfView: CGFloat
-    private var isVideoMirrored: Bool
     private var format: AVCaptureDevice.Format?
     private var prevCaptureInput: AVCaptureInput?
 
@@ -93,6 +93,14 @@ public class MirrorAVSessionInput: NSObject, Input {
         self.videoOrientation = orientation
         configurationQueue.async { [weak self] in
             self?.videoConnection?.videoOrientation = orientation
+        }
+        destination?.inputChangedAttributes(self)
+    }
+
+    public func toggleVideoMirror() {
+        self.isVideoMirrored = !self.isVideoMirrored
+        configurationQueue.async { [weak self] in
+            self?.videoConnection?.isVideoMirrored = self?.isVideoMirrored ?? true
         }
         destination?.inputChangedAttributes(self)
     }
