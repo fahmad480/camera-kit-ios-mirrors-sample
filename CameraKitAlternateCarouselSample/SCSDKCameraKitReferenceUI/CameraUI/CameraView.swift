@@ -48,6 +48,26 @@ open class CameraView: UIView {
         return button
     }()
 
+    /// Debug button for frame orientation
+    public lazy var frameOrientationButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Frame: Portrait", for: .normal)
+        button.backgroundColor = .systemBlue
+        button.layer.cornerRadius = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    /// Debug button for video orientation
+    public lazy var videoOrientationButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Video: LandscapeLeft", for: .normal)
+        button.backgroundColor = .systemGreen
+        button.layer.cornerRadius = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     /// current lens information bar plus clear current lens button
     public let clearLensView: ClearLensView = {
         let view = ClearLensView()
@@ -135,6 +155,7 @@ extension CameraView {
         setupCameraBar()
         setupWatermark()
         setupActivityIndicator()
+        setupDebugButtons()
     }
 
     private func setupPreview() {
@@ -144,6 +165,23 @@ extension CameraView {
             previewView.trailingAnchor.constraint(equalTo: trailingAnchor),
             previewView.topAnchor.constraint(equalTo: topAnchor),
             previewView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+    }
+
+    private func setupDebugButtons() {
+        addSubview(frameOrientationButton)
+        addSubview(videoOrientationButton)
+        
+        NSLayoutConstraint.activate([
+            frameOrientationButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
+            frameOrientationButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            frameOrientationButton.widthAnchor.constraint(equalToConstant: 150),
+            frameOrientationButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            videoOrientationButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
+            videoOrientationButton.leadingAnchor.constraint(equalTo: frameOrientationButton.trailingAnchor, constant: 16),
+            videoOrientationButton.widthAnchor.constraint(equalToConstant: 150),
+            videoOrientationButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
 

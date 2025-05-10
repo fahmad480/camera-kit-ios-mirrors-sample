@@ -2,11 +2,12 @@ import AVFoundation
 import Foundation
 import SCSDKCameraKit
 
-class MirrorAVSessionInput: NSObject, Input {
-    var destination: InputDestination?
-    private(set) var frameSize: CGSize
-    private(set) var frameOrientation: AVCaptureVideoOrientation
-    var position: AVCaptureDevice.Position {
+public class MirrorAVSessionInput: NSObject, Input {
+    public var destination: InputDestination?
+    public private(set) var frameSize: CGSize
+    public private(set) var frameOrientation: AVCaptureVideoOrientation
+    public private(set) var videoOrientation: AVCaptureVideoOrientation
+    public var position: AVCaptureDevice.Position {
         didSet {
             guard position != oldValue else { return }
             videoSession.beginConfiguration()
@@ -29,14 +30,13 @@ class MirrorAVSessionInput: NSObject, Input {
         AVCaptureDevice.default(.builtInWideAngleCamera, for: AVMediaType.video, position: position)
     }
 
-    var isRunning: Bool { videoSession.isRunning }
-    var horizontalFieldOfView: CGFloat { fieldOfView }
+    public var isRunning: Bool { videoSession.isRunning }
+    public var horizontalFieldOfView: CGFloat { fieldOfView }
 
     private var fieldOfView: CGFloat
     private var isVideoMirrored: Bool
     private var format: AVCaptureDevice.Format?
     private var prevCaptureInput: AVCaptureInput?
-    private var videoOrientation: AVCaptureVideoOrientation
 
     private let context = CIContext()
     private let videoSession: AVCaptureSession
@@ -53,7 +53,7 @@ class MirrorAVSessionInput: NSObject, Input {
     private let videoQueue: DispatchQueue
     private let configurationQueue: DispatchQueue
 
-    init(session: AVCaptureSession, fieldOfView: CGFloat = Constants.defaultFieldOfView) {
+    public init(session: AVCaptureSession, fieldOfView: CGFloat = Constants.defaultFieldOfView) {
         self.fieldOfView = fieldOfView
         self.videoSession = session
         self.frameOrientation = .portrait
@@ -74,27 +74,32 @@ class MirrorAVSessionInput: NSObject, Input {
         videoSession.commitConfiguration()
     }
 
-    func startRunning() {
+    public func startRunning() {
         restoreFormat()
         videoSession.startRunning()
     }
 
-    func stopRunning() {
+    public func stopRunning() {
         storeFormat()
         videoSession.stopRunning()
     }
 
-    func setVideoOrientation(_ videoOrientation: AVCaptureVideoOrientation) {
-        self.videoOrientation = videoOrientation
+    public func setFrameOrientation(_ orientation: AVCaptureVideoOrientation) {
+        self.frameOrientation = orientation
         destination?.inputChangedAttributes(self)
+    }
+
+    public func setVideoOrientation(_ orientation: AVCaptureVideoOrientation) {
+        self.videoOrientation = orientation
         configurationQueue.async { [weak self] in
-            self?.videoConnection?.videoOrientation = videoOrientation
+            self?.videoConnection?.videoOrientation = orientation
         }
+        destination?.inputChangedAttributes(self)
     }
 }
 
 extension MirrorAVSessionInput: AVCaptureVideoDataOutputSampleBufferDelegate {
-    func captureOutput(
+    public func captureOutput(
         _ output: AVCaptureOutput,
         didOutput sampleBuffer: CMSampleBuffer,
         from connection: AVCaptureConnection
@@ -168,7 +173,7 @@ private extension MirrorAVSessionInput {
 }
 
 extension MirrorAVSessionInput {
-    enum Constants {
-        static let defaultFieldOfView: CGFloat = 78.0
+    public enum Constants {
+        public static let defaultFieldOfView: CGFloat = 78.0
     }
 }

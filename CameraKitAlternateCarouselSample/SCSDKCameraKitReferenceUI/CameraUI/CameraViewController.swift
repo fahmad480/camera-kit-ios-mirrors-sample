@@ -266,6 +266,11 @@ extension CameraViewController {
             self, action: #selector(self.flip(sender:)), for: .touchUpInside)
         cameraView.smallFrameFlipCameraButton.addTarget(
             self, action: #selector(self.flip(sender:)), for: .touchUpInside)
+        
+        cameraView.frameOrientationButton.addTarget(
+            self, action: #selector(self.frameOrientationButtonTapped(_:)), for: .touchUpInside)
+        cameraView.videoOrientationButton.addTarget(
+            self, action: #selector(self.videoOrientationButtonTapped(_:)), for: .touchUpInside)
 
         lensPickerView.delegate = self
         lensPickerView.dataSource = self
@@ -635,6 +640,43 @@ extension CameraViewController {
         } else {
             // If not recording, start it
             cameraButtonHoldBegan(cameraView.cameraButton)
+        }
+    }
+}
+
+// MARK: Debug Orientation Controls
+extension CameraViewController {
+    @objc private func frameOrientationButtonTapped(_ sender: UIButton) {
+        let orientations: [AVCaptureVideoOrientation] = [.portrait, .portraitUpsideDown, .landscapeLeft, .landscapeRight]
+        if let input = cameraController.mirrorInput {
+            let currentIndex = orientations.firstIndex(of: input.frameOrientation) ?? 0
+            let nextIndex = (currentIndex + 1) % orientations.count
+            let nextOrientation = orientations[nextIndex]
+            
+            input.setFrameOrientation(nextOrientation)
+            sender.setTitle("Frame: \(orientationString(nextOrientation))", for: .normal)
+        }
+    }
+
+    @objc private func videoOrientationButtonTapped(_ sender: UIButton) {
+        let orientations: [AVCaptureVideoOrientation] = [.portrait, .portraitUpsideDown, .landscapeLeft, .landscapeRight]
+        if let input = cameraController.mirrorInput {
+            let currentIndex = orientations.firstIndex(of: input.videoOrientation) ?? 0
+            let nextIndex = (currentIndex + 1) % orientations.count
+            let nextOrientation = orientations[nextIndex]
+            
+            input.setVideoOrientation(nextOrientation)
+            sender.setTitle("Video: \(orientationString(nextOrientation))", for: .normal)
+        }
+    }
+
+    private func orientationString(_ orientation: AVCaptureVideoOrientation) -> String {
+        switch orientation {
+        case .portrait: return "Portrait"
+        case .portraitUpsideDown: return "PortraitUpsideDown"
+        case .landscapeLeft: return "LandscapeLeft"
+        case .landscapeRight: return "LandscapeRight"
+        @unknown default: return "Unknown"
         }
     }
 }
