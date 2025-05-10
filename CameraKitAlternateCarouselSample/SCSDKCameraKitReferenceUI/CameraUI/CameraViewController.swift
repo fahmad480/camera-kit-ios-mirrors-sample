@@ -273,6 +273,8 @@ extension CameraViewController {
             self, action: #selector(self.videoOrientationButtonTapped(_:)), for: .touchUpInside)
         cameraView.mirrorButton.addTarget(
             self, action: #selector(self.mirrorButtonTapped(_:)), for: .touchUpInside)
+        cameraView.positionButton.addTarget(
+            self, action: #selector(self.positionButtonTapped(_:)), for: .touchUpInside)
 
         lensPickerView.delegate = self
         lensPickerView.dataSource = self
@@ -676,6 +678,14 @@ extension CameraViewController {
         if let input = cameraController.mirrorInput {
             input.toggleVideoMirror()
             sender.setTitle("Mirror: \(input.isVideoMirrored ? "On" : "Off")", for: .normal)
+        }
+    }
+
+    @objc private func positionButtonTapped(_ sender: UIButton) {
+        if let input = cameraController.mirrorInput {
+            let newPosition: AVCaptureDevice.Position = input.position == .front ? .back : .front
+            input.position = newPosition
+            sender.setTitle("Position: \(newPosition == .front ? "Front" : "Back")", for: .normal)
         }
     }
 

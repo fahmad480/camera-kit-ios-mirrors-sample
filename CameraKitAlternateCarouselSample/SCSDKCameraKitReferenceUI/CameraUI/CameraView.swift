@@ -70,6 +70,28 @@ open class CameraView: UIView {
         return button
     }()
 
+    /// Debug button for mirror control
+    public let mirrorButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Mirror: On", for: .normal)
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
+        button.layer.cornerRadius = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    /// Debug button for camera position
+    public let positionButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Position: Front", for: .normal)
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
+        button.layer.cornerRadius = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     /// current lens information bar plus clear current lens button
     public let clearLensView: ClearLensView = {
         let view = ClearLensView()
@@ -129,17 +151,6 @@ open class CameraView: UIView {
         return view
     }()
 
-    /// Mirror button
-    public let mirrorButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Mirror: On", for: .normal)
-        button.backgroundColor = .white
-        button.setTitleColor(.black, for: .normal)
-        button.layer.cornerRadius = 8
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
     public override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -185,6 +196,7 @@ extension CameraView {
         addSubview(frameOrientationButton)
         addSubview(videoOrientationButton)
         addSubview(mirrorButton)
+        addSubview(positionButton)
 
         NSLayoutConstraint.activate([
             // Frame orientation button
@@ -202,9 +214,15 @@ extension CameraView {
             // Mirror button
             mirrorButton.leadingAnchor.constraint(equalTo: videoOrientationButton.trailingAnchor, constant: 8),
             mirrorButton.bottomAnchor.constraint(equalTo: cameraButton.topAnchor, constant: -16),
-            mirrorButton.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -16),
             mirrorButton.widthAnchor.constraint(equalToConstant: 80),
-            mirrorButton.heightAnchor.constraint(equalToConstant: 44)
+            mirrorButton.heightAnchor.constraint(equalToConstant: 44),
+
+            // Position button
+            positionButton.leadingAnchor.constraint(equalTo: mirrorButton.trailingAnchor, constant: 8),
+            positionButton.bottomAnchor.constraint(equalTo: cameraButton.topAnchor, constant: -16),
+            positionButton.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -16),
+            positionButton.widthAnchor.constraint(equalToConstant: 100),
+            positionButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
 
