@@ -56,14 +56,14 @@ class MirrorAVSessionInput: NSObject, Input {
     init(session: AVCaptureSession, fieldOfView: CGFloat = Constants.defaultFieldOfView) {
         self.fieldOfView = fieldOfView
         self.videoSession = session
-        self.frameOrientation = .portrait
+        self.frameOrientation = .portraitUpsideDown
         self.configurationQueue = DispatchQueue(label: "com.snap.mirror.avsessioninput.configuration")
         self.videoOutput = AVCaptureVideoDataOutput()
         self.videoQueue = DispatchQueue(label: "com.snap.mirror.videoOutput")
         self.frameSize = UIScreen.main.bounds.size
         self.position = .front
-        self.isVideoMirrored = true
-        self.videoOrientation = .landscapeLeft
+        self.isVideoMirrored = false
+        self.videoOrientation = .potrait
         super.init()
 
         videoSession.beginConfiguration()
