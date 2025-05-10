@@ -245,6 +245,15 @@ extension CameraViewController {
         setupActions()
         cameraController.cameraKit.add(output: cameraView.previewView)
         cameraController.uiDelegate = self
+        
+        // Update resolution label with initial camera resolution
+        updateResolutionLabel()
+        
+        // Listen for camera input changes to update resolution
+        NotificationCenter.default.addObserver(self, 
+                                               selector: #selector(cameraInputDidChange), 
+                                               name: NSNotification.Name.cameraKitInputDidChange, 
+                                               object: nil)
     }
 
     /// Configures the target actions and delegates needed for the view controller to function
@@ -282,6 +291,26 @@ extension CameraViewController {
 
         cameraView.cameraButton.delegate = self
         cameraView.cameraButton.allowWhileRecording = [doubleTap, pinchGestureRecognizer]
+    }
+
+    /// Updates the resolution label with the current camera resolution
+    private func updateResolutionLabel() {
+        // Ensure this always runs on the main thread
+        if !Thread.isMainThread {
+            DispatchQueue.main.async { [weak self] in
+                self?.updateResolutionLabel()
+            }
+            return
+        }
+        
+        if let mirrorInput = cameraController.mirrorInput {
+            cameraView.updateResolutionLabel(with: mirrorInput.frameSize)
+        }
+    }
+    
+    /// Called when the camera input changes
+    @objc private func cameraInputDidChange(_ notification: Notification) {
+        updateResolutionLabel()
     }
 
 }
@@ -345,6 +374,11 @@ extension CameraViewController {
             cameraView.smallFrameFlipCameraButton.accessibilityValue = CameraElements.CameraFlip.back
         default:
             break
+        }
+        
+        // Update resolution label after camera flip
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.updateResolutionLabel()
         }
     }
 }
@@ -659,6 +693,9 @@ extension CameraViewController {
             
             input.setFrameOrientation(nextOrientation)
             sender.setTitle("Frame: \(orientationString(nextOrientation))", for: .normal)
+            
+            // Update resolution label
+            updateResolutionLabel()
         }
     }
 
@@ -671,6 +708,9 @@ extension CameraViewController {
             
             input.setVideoOrientation(nextOrientation)
             sender.setTitle("Video: \(orientationString(nextOrientation))", for: .normal)
+            
+            // Update resolution label
+            updateResolutionLabel()
         }
     }
 

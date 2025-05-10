@@ -6,6 +6,21 @@ import AVKit
 import SCSDKCameraKit
 import UIKit
 
+/// A UILabel subclass that adds padding around the text
+public class PaddedLabel: UILabel {
+    public var padding = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
+    
+    override public func drawText(in rect: CGRect) {
+        super.drawText(in: rect.inset(by: padding))
+    }
+    
+    override public var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        return CGSize(width: size.width + padding.left + padding.right,
+                      height: size.height + padding.top + padding.bottom)
+    }
+}
+
 /// This is the default view that backs the CameraViewController.
 open class CameraView: UIView {
     private enum Constants {
@@ -19,6 +34,21 @@ open class CameraView: UIView {
         view.clipsToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
+    }()
+
+    /// Resolution label to display camera resolution
+    public let resolutionLabel: PaddedLabel = {
+        let label = PaddedLabel()
+        label.textColor = .white
+        label.backgroundColor = UIColor(white: 0, alpha: 0.5)
+        label.layer.cornerRadius = 6
+        label.layer.masksToBounds = true
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Resolution: --"
+        label.isHidden = false
+        return label
     }()
 
     /// button to flip camera input position in full frame
@@ -180,6 +210,7 @@ extension CameraView {
         setupWatermark()
         setupActivityIndicator()
         setupDebugButtons()
+        setupResolutionLabel()
     }
 
     private func setupPreview() {
@@ -324,6 +355,31 @@ extension CameraView {
         ])
     }
 
+}
+
+// MARK: Resolution Label
+
+extension CameraView {
+    
+    private func setupResolutionLabel() {
+        addSubview(resolutionLabel)
+        NSLayoutConstraint.activate([
+            resolutionLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
+            resolutionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            resolutionLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 24)
+        ])
+    }
+    
+    public func updateResolutionLabel(with size: CGSize) {
+        let width = Int(size.width)
+        let height = Int(size.height)
+        
+        // Ensure UI updates happen on main thread
+        DispatchQueue.main.async { [weak self] in
+            self?.resolutionLabel.text = "\(width)×\(height)"
+        }
+    }
+    
 }
 
 // MARK: Tap to Focus

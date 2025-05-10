@@ -20,6 +20,9 @@ public class MirrorAVSessionInput: NSObject, Input {
                     update(input: input, isAsync: false)
                     videoSession.commitConfiguration()
                     destination?.inputChangedAttributes(self)
+                    
+                    // Post notification that input changed
+                    NotificationCenter.default.post(name: NSNotification.Name.cameraKitInputDidChange, object: self)
                 } catch {
                     debugPrint("[\(String(describing: self))]: Failed to add \(position) input")
                 }
@@ -116,6 +119,9 @@ extension MirrorAVSessionInput: AVCaptureVideoDataOutputSampleBufferDelegate {
             if let input = connection.inputPorts.first?.input, input != prevCaptureInput {
                 update(input: input)
                 destination?.inputChangedAttributes(self)
+                
+                // Post notification that input changed
+                NotificationCenter.default.post(name: NSNotification.Name.cameraKitInputDidChange, object: self)
             }
             destination?.input(self, receivedVideoSampleBuffer: sampleBuffer)
         }
@@ -154,6 +160,10 @@ private extension MirrorAVSessionInput {
             fieldOfView = CGFloat(input.device.activeFormat.videoFieldOfView)
             position = input.device.position
             format = input.device.activeFormat
+            
+            // Update frameSize based on the actual format dimensions
+            let dimensions = CMVideoFormatDescriptionGetDimensions(input.device.activeFormat.formatDescription)
+            frameSize = CGSize(width: CGFloat(dimensions.width), height: CGFloat(dimensions.height))
         }
 
         isVideoMirrored = position == .front
@@ -184,4 +194,9 @@ extension MirrorAVSessionInput {
     public enum Constants {
         public static let defaultFieldOfView: CGFloat = 78.0
     }
+}
+
+/// CameraKit notification when input changes
+extension NSNotification.Name {
+    public static let cameraKitInputDidChange = NSNotification.Name("cameraKitInputDidChange")
 }
