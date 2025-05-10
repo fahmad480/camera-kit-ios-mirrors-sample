@@ -187,19 +187,23 @@ extension CameraView {
         addSubview(mirrorButton)
 
         NSLayoutConstraint.activate([
+            // Frame orientation button
             frameOrientationButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             frameOrientationButton.bottomAnchor.constraint(equalTo: cameraButton.topAnchor, constant: -16),
-            frameOrientationButton.widthAnchor.constraint(equalToConstant: 150),
+            frameOrientationButton.widthAnchor.constraint(equalToConstant: 120),
             frameOrientationButton.heightAnchor.constraint(equalToConstant: 44),
 
-            videoOrientationButton.leadingAnchor.constraint(equalTo: frameOrientationButton.trailingAnchor, constant: 16),
+            // Video orientation button
+            videoOrientationButton.leadingAnchor.constraint(equalTo: frameOrientationButton.trailingAnchor, constant: 8),
             videoOrientationButton.bottomAnchor.constraint(equalTo: cameraButton.topAnchor, constant: -16),
-            videoOrientationButton.widthAnchor.constraint(equalToConstant: 150),
+            videoOrientationButton.widthAnchor.constraint(equalToConstant: 120),
             videoOrientationButton.heightAnchor.constraint(equalToConstant: 44),
 
-            mirrorButton.leadingAnchor.constraint(equalTo: videoOrientationButton.trailingAnchor, constant: 16),
+            // Mirror button
+            mirrorButton.leadingAnchor.constraint(equalTo: videoOrientationButton.trailingAnchor, constant: 8),
             mirrorButton.bottomAnchor.constraint(equalTo: cameraButton.topAnchor, constant: -16),
-            mirrorButton.widthAnchor.constraint(equalToConstant: 100),
+            mirrorButton.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -16),
+            mirrorButton.widthAnchor.constraint(equalToConstant: 80),
             mirrorButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
