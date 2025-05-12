@@ -63,7 +63,7 @@ class MirrorAVSessionInput: NSObject, Input {
         self.frameSize = UIScreen.main.bounds.size
         self.position = .front
         self.isVideoMirrored = false
-        self.videoOrientation = .portrait
+        self.videoOrientation = .landscapeLeft
         super.init()
 
         videoSession.beginConfiguration()
