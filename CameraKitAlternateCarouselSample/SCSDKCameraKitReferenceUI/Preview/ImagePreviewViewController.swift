@@ -60,7 +60,7 @@ public class ImagePreviewViewController: PreviewViewController {
         imageView.isHidden = false // Ensure image remains visible
         
         let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "https://temp.sh/upload")!)
+        var request = URLRequest(url: URL(string: "https://file.firaga.studio/api/upload")!)
         request.httpMethod = "POST"
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         
@@ -69,6 +69,9 @@ public class ImagePreviewViewController: PreviewViewController {
         body.append("Content-Disposition: form-data; name=\"file\"; filename=\"image.jpg\"\r\n".data(using: .utf8)!)
         body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
         body.append(imageData)
+        body.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"group\"\r\n\r\n".data(using: .utf8)!)
+        body.append("GUGU".data(using: .utf8)!)
         body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
         
         request.httpBody = body
@@ -84,16 +87,27 @@ public class ImagePreviewViewController: PreviewViewController {
                     return
                 }
                 
-                guard let data = data,
-                      let responseString = String(data: data, encoding: .utf8),
-                      let url = URL(string: responseString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
-                    print("Invalid response")
+                guard let data = data else {
+                    print("No data received")
                     return
                 }
                 
-                // Generate QR code
-                let qrCode = self.generateQRCode(from: url.absoluteString)
-                self.showQRCode(qrCode)
+                do {
+                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let success = json["success"] as? Bool,
+                       success == true,
+                       let responseData = json["data"] as? [String: Any],
+                       let previewUrl = responseData["preview_url"] as? String {
+                        
+                        // Generate QR code from preview_url
+                        let qrCode = self.generateQRCode(from: previewUrl)
+                        self.showQRCode(qrCode)
+                    } else {
+                        print("Invalid response format")
+                    }
+                } catch {
+                    print("Failed to parse response: \(error.localizedDescription)")
+                }
             }
         }
         task.resume()
