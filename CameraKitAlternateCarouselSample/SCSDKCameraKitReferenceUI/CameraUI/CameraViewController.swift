@@ -33,6 +33,9 @@ open class CameraViewController: UIViewController, CameraControllerUIDelegate {
     /// App orientation delegate to control app orientation
     public weak var appOrientationDelegate: AppOrientationDelegate?
 
+    /// Flag to track whether we've already auto-selected the first lens
+    private var hasAutoSelectedFirstLens = false
+
     /// convenience prop to get current interface orientation of application/scene
     fileprivate var applicationInterfaceOrientation: UIInterfaceOrientation {
         var interfaceOrientation = UIApplication.shared.statusBarOrientation
@@ -179,6 +182,24 @@ open class CameraViewController: UIViewController, CameraControllerUIDelegate {
 
         if !(selectedItem is EmptyItem) {
             lensPickerView.selectItem(selectedItem)
+        } else if !lenses.isEmpty {
+            // Auto-select the first lens when lenses are loaded
+            autoSelectFirstLens(lenses: lenses)
+        }
+    }
+    
+    /// Automatically selects the first lens in the list
+    private func autoSelectFirstLens(lenses: [Lens]) {
+        // Only auto-select the first lens once to avoid re-applying on subsequent lens updates
+        guard !hasAutoSelectedFirstLens, let firstLens = lenses.first else { return }
+        
+        hasAutoSelectedFirstLens = true
+        print("Auto-selecting first lens: \(firstLens.name ?? "Unnamed") (\(firstLens.id))")
+        applyLens(firstLens)
+        
+        // Update the lens picker selection to match
+        if let firstItem = itemsForLensPickerView(lensPickerView).first {
+            lensPickerView.selectItem(firstItem)
         }
     }
 
@@ -286,6 +307,7 @@ extension CameraViewController {
     @objc private func closeButtonPressed(_ sender: UIButton) {
         clearLens()
         lensPickerView.selectItem(EmptyItem())
+        hasAutoSelectedFirstLens = false // Reset flag so we can auto-select again if lenses are updated
     }
 
 }
