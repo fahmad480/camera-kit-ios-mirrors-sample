@@ -30,6 +30,8 @@ open class CameraView: UIView {
         button.setImage(
             UIImage(named: Constants.cameraFlip, in: BundleHelper.resourcesBundle, compatibleWith: nil), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
+        // default hidden is false
+        button.isHidden = true
 
         return button
     }()
@@ -74,6 +76,8 @@ open class CameraView: UIView {
         view.accessibilityIdentifier = CameraElements.cameraButton.id
         view.isAccessibilityElement = true
         view.translatesAutoresizingMaskIntoConstraints = false
+        // default hidden is false
+        view.isHidden = true
         return view
     }()
 
@@ -84,6 +88,7 @@ open class CameraView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(
             UIImage(named: Constants.lensExplore, in: BundleHelper.resourcesBundle, compatibleWith: nil), for: .normal)
+        // button.isHidden = true
         return button
     }()
 
@@ -200,8 +205,10 @@ extension CameraView {
     }
 
     func updateFlipButton(isInFullScreen: Bool) {
-        fullFrameFlipCameraButton.isHidden = !isInFullScreen
-        smallFrameFlipCameraButton.isHidden = isInFullScreen
+        // fullFrameFlipCameraButton.isHidden = !isInFullScreen
+        // smallFrameFlipCameraButton.isHidden = isInFullScreen
+        fullFrameFlipCameraButton.isHidden = true
+        smallFrameFlipCameraButton.isHidden = true
     }
 
 }

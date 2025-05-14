@@ -423,7 +423,8 @@ extension CameraViewController: LensPickerViewControllerDelegate, LensPickerView
             UIView.animate(withDuration: 0.3, animations: {
                 self.cameraView.frame = self.smallFrameSize
                 self.cameraView.previewView.layer.cornerRadius = 12
-                self.cameraView.updateFlipButton(isInFullScreen: false)
+                self.cameraView.fullFrameFlipCameraButton.isHidden = true
+                self.cameraView.smallFrameFlipCameraButton.isHidden = true
 
                 self.view.layoutIfNeeded()
             })
@@ -437,13 +438,14 @@ extension CameraViewController: LensPickerViewControllerDelegate, LensPickerView
             UIView.animate(withDuration: 0.3, animations: {
                 self.cameraView.frame = self.fullFrameSize
                 self.cameraView.previewView.layer.cornerRadius = 0
-                self.cameraView.updateFlipButton(isInFullScreen: true)
+                self.cameraView.fullFrameFlipCameraButton.isHidden = true
+                self.cameraView.smallFrameFlipCameraButton.isHidden = true
 
                 self.view.layoutIfNeeded()
             })
 
             self.cameraView.clearLensView.isHidden = self.cameraController.currentLens == nil
-            self.cameraView.cameraButton.isHidden = false
+            self.cameraView.cameraButton.isHidden = true
             self.cameraView.lensPickerButton.isHidden = false
             cameraView.snapWatermark.isHidden = false
 
