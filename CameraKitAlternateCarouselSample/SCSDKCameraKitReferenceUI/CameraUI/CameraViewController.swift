@@ -132,6 +132,10 @@ open class CameraViewController: UIViewController, CameraControllerUIDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     // MARK: Overridable Helper
 
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -266,6 +270,87 @@ extension CameraViewController {
         setupActions()
         cameraController.cameraKit.add(output: cameraView.previewView)
         cameraController.uiDelegate = self
+        
+        // Register for lens capture trigger notifications
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleCaptureTrigger(_:)),
+            name: NSNotification.Name("TriggerCapture"),
+            object: nil
+        )
+    }
+    
+    /// Handle capture triggers from lens
+    @objc private func handleCaptureTrigger(_ notification: Notification) {
+        if let userInfo = notification.userInfo {
+            let captureType = userInfo["type"] as? String ?? "photo"
+            print("Handling capture trigger from lens: \(captureType)")
+            
+            if captureType == "photo" {
+                // Trigger photo capture dengan memanggil cameraButtonTapped
+                cameraButtonTapped(cameraView.cameraButton)
+            } else if captureType == "video" {
+                // Ambil durasi video dari permintaan lens, default 10 detik jika tidak ada
+                let durationString = userInfo["duration"] as? String
+                let duration = TimeInterval(durationString ?? "10.0") ?? 10.0
+                
+                // Pastikan durasi berada dalam batasan yang wajar (antara 3-30 detik)
+                let finalDuration = min(max(duration, 3.0), 30.0)
+                
+                print("Received video recording request with duration: \(finalDuration) seconds")
+                
+                // Merekam video statis dengan durasi yang ditentukan oleh lens
+                recordFixedDurationVideo(duration: finalDuration)
+            }
+        }
+    }
+
+    /// Merekam video dengan durasi tetap dan tidak dapat dihentikan
+    private func recordFixedDurationVideo(duration: TimeInterval) {
+        // Hanya memulai perekaman jika belum sedang merekam
+        if cameraController.recorder == nil {
+            print("Starting fixed duration video recording for \(duration) seconds")
+            
+            // Mulai perekaman
+            cameraButtonHoldBegan(cameraView.cameraButton)
+            
+            // Nonaktifkan interaksi pengguna pada tombol kamera selama perekaman berlangsung
+            cameraView.cameraButton.isUserInteractionEnabled = false
+            
+            // Tampilkan indikator timer atau pesan bahwa video sedang direkam
+            let feedbackLabel = UILabel()
+            feedbackLabel.text = "Recording video... (\(Int(duration))s)"
+            feedbackLabel.textColor = .white
+            feedbackLabel.backgroundColor = UIColor(white: 0, alpha: 0.7)
+            feedbackLabel.textAlignment = .center
+            feedbackLabel.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+            feedbackLabel.layer.cornerRadius = 8
+            feedbackLabel.clipsToBounds = true
+            feedbackLabel.tag = 9999  // Tag untuk referensi nanti
+            feedbackLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 40)
+            feedbackLabel.center = CGPoint(x: view.bounds.midX, y: view.bounds.maxY - 100)
+            view.addSubview(feedbackLabel)
+            
+            // Jadwalkan waktu untuk menghentikan perekaman secara otomatis
+            DispatchQueue.main.asyncAfter(deadline: .now() + duration) { [weak self] in
+                guard let self = self else { return }
+                
+                // Hentikan perekaman
+                self.cameraButtonHoldEnded(self.cameraView.cameraButton)
+                
+                // Aktifkan kembali interaksi pengguna
+                self.cameraView.cameraButton.isUserInteractionEnabled = true
+                
+                // Hapus indikator timer
+                if let label = self.view.viewWithTag(9999) {
+                    label.removeFromSuperview()
+                }
+                
+                print("Fixed duration video recording completed")
+            }
+        } else {
+            print("Already recording, ignoring trigger")
+        }
     }
 
     /// Configures the target actions and delegates needed for the view controller to function
@@ -292,7 +377,7 @@ extension CameraViewController {
         lensPickerView.dataSource = self
         lensPickerView.performInitialSelection()
 
-        cameraView.cameraButton.delegate = self
+        self.cameraView.cameraButton.delegate = self
         cameraView.cameraButton.allowWhileRecording = [doubleTap, pinchGestureRecognizer]
     }
 
