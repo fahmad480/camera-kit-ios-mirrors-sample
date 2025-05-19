@@ -75,20 +75,24 @@ class MirrorAVSessionInput: NSObject, Input {
     }
 
     func startRunning() {
-        restoreFormat()
-        videoSession.startRunning()
+        configurationQueue.sync {
+            restoreFormat()
+            videoSession.startRunning()
+        }
     }
 
     func stopRunning() {
-        storeFormat()
-        videoSession.stopRunning()
+        configurationQueue.sync {
+            storeFormat()
+            videoSession.stopRunning()
+        }
     }
 
     func setVideoOrientation(_ videoOrientation: AVCaptureVideoOrientation) {
         self.videoOrientation = videoOrientation
         destination?.inputChangedAttributes(self)
-        configurationQueue.async { [weak self] in
-            self?.videoConnection?.videoOrientation = videoOrientation
+        configurationQueue.sync {
+            videoConnection?.videoOrientation = videoOrientation
         }
     }
 }

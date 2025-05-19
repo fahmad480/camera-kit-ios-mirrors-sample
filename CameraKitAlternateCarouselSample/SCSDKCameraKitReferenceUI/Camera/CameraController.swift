@@ -170,18 +170,16 @@ open class CameraController: NSObject, LensRepositoryGroupObserver, LensPrefetch
         textInputContextProvider: TextInputContextProvider?,
         agreementsPresentationContextProvider: AgreementsPresentationContextProvider?
     ) {
-        // Create a CameraKit input. AVSessionInput is an input that CameraKit provides that wraps up lens-specific
-        // details of AVCaptureSession configuration (such as setting the pixel format).
-        // You are still responsible for normal configuration of the session (adding the AVCaptureDevice, etc).
+        // Create a CameraKit input
         let input = MirrorAVSessionInput(session: captureSession)
-        // Create a CameraKit ARKit input. AVSessionInput is an input that CameraKit provides that wraps up lens-specific
-        // details of ARSession configuration.
         let arInput = ARSessionInput()
 
-        // Start the actual CameraKit session. Once the session is started, CameraKit will begin processing frames and
-        // sending output. The lens processor (cameraKit.lenses.processor) will be instantiated at this point, and
-        // you can start sending commands to it (such as applying/clearing lenses).
-  
+        // Configure capture session first
+        DispatchQueue.global(qos: .userInteractive).sync {
+            input.startRunning()
+        }
+
+        // Then start CameraKit session
         cameraKit.start(
             input: input,
             arInput: arInput,
@@ -192,15 +190,6 @@ open class CameraController: NSObject, LensRepositoryGroupObserver, LensPrefetch
             textInputContextProvider: textInputContextProvider,
             agreementsPresentationContextProvider: agreementsPresentationContextProvider
         )
-        
-        // Start the capture session. It's important you start the capture session after starting the CameraKit session
-        // because the CameraKit input and session configures the capture session implicitly and you may run into a
-        // race condition which causes some audio and video output frames to be lost, resulting in a blank preview view
-        DispatchQueue.global(qos: .userInteractive).async {
-            input.startRunning()
-            //self.configureCaptureSession()
-        }
-        
 
         cameraKit.presentAgreementsImmediately()
     }
