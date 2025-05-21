@@ -17,6 +17,7 @@
 		1B0D01D52D3AD0080052D621 /* MirrorAVSessionInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0D01D42D3AD0080052D621 /* MirrorAVSessionInput.swift */; };
 		1B0D01D82D3AD0F20052D621 /* SCSDKCameraKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1B0D01D72D3AD0F20052D621 /* SCSDKCameraKit */; };
 		1B0D01DC2D3AD13A0052D621 /* SnapSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 1B0D01DB2D3AD13A0052D621 /* SnapSDK */; };
+		73C027EA2DD82C340012D4A1 /* CaptureRemoteApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C027E92DD82C340012D4A1 /* CaptureRemoteApiService.swift */; };
 		A61C123928DD1ADE00F36769 /* CameraButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61C11FE28DD1ADE00F36769 /* CameraButton.swift */; };
 		A61C123A28DD1ADE00F36769 /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61C120028DD1ADE00F36769 /* CameraController.swift */; };
 		A61C123B28DD1ADE00F36769 /* Reference.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A61C120228DD1ADE00F36769 /* Reference.xcassets */; };
@@ -75,6 +76,7 @@
 		0FF07EEB23D79DC500CFFA3F /* Firaga MirrorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Firaga MirrorUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF07F0123D7BFC100CFFA3F /* lenses */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lenses; sourceTree = "<group>"; };
 		1B0D01D42D3AD0080052D621 /* MirrorAVSessionInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirrorAVSessionInput.swift; sourceTree = "<group>"; };
+		73C027E92DD82C340012D4A1 /* CaptureRemoteApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureRemoteApiService.swift; sourceTree = "<group>"; };
 		A61C11FE28DD1ADE00F36769 /* CameraButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraButton.swift; sourceTree = "<group>"; };
 		A61C120028DD1ADE00F36769 /* CameraController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		A61C120228DD1ADE00F36769 /* Reference.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Reference.xcassets; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 		0F16357723F1E30900DA79A0 /* Application */ = {
 			isa = PBXGroup;
 			children = (
+				73C027E92DD82C340012D4A1 /* CaptureRemoteApiService.swift */,
 				0F16357823F1E30900DA79A0 /* ApplicationInfo.swift */,
 				0F5219212832D18C00CFDC26 /* CatFactLensRemoteApi.swift */,
 			);
@@ -465,6 +468,7 @@
 				1B0D01D52D3AD0080052D621 /* MirrorAVSessionInput.swift in Sources */,
 				0FF07ECE23D79DC400CFFA3F /* AppDelegate.swift in Sources */,
 				A61C125828DD1ADE00F36769 /* UserDataProvider.swift in Sources */,
+				73C027EA2DD82C340012D4A1 /* CaptureRemoteApiService.swift in Sources */,
 				A61C124528DD1ADE00F36769 /* CameraView.swift in Sources */,
 				A61C124D28DD1ADE00F36769 /* Testable.swift in Sources */,
 				A656999B28E5193800D9CF59 /* LensPickerViewController.swift in Sources */,

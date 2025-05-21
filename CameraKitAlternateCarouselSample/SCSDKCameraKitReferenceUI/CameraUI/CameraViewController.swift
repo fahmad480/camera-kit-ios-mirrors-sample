@@ -33,6 +33,9 @@ open class CameraViewController: UIViewController, CameraControllerUIDelegate {
     /// App orientation delegate to control app orientation
     public weak var appOrientationDelegate: AppOrientationDelegate?
 
+    /// Flag to track whether we've already auto-selected the first lens
+    private var hasAutoSelectedFirstLens = false
+
     /// convenience prop to get current interface orientation of application/scene
     fileprivate var applicationInterfaceOrientation: UIInterfaceOrientation {
         var interfaceOrientation = UIApplication.shared.statusBarOrientation
@@ -69,6 +72,40 @@ open class CameraViewController: UIViewController, CameraControllerUIDelegate {
     public var smallFrameSize = CGRect(x: 0, y: 0, width: 203, height: 362)
 
     public var isInFullFrame = true
+    
+    /// Countdown label for video recording
+    private let countdownLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.backgroundColor = UIColor(white: 0, alpha: 0.5)
+        label.textAlignment = .center
+        label.layer.cornerRadius = 8
+        label.clipsToBounds = true
+        label.isHidden = true
+        return label
+    }()
+    
+    /// Recording indicator label
+    private let recordingIndicator: UILabel = {
+        let label = UILabel()
+        label.text = "REC"
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.backgroundColor = .red
+        label.textAlignment = .center
+        label.layer.cornerRadius = 4
+        label.clipsToBounds = true
+        label.isHidden = true
+        return label
+    }()
+    
+    /// Timer for countdown
+    private var countdownTimer: Timer?
+    private var recordingDuration: TimeInterval = 0
+    private var blinkTimer: Timer?
+    private var maxRecordingDuration: TimeInterval = 0 // Will be set from userInfo
+    private var isRecording: Bool = false // Flag untuk melacak status recording
 
     override open func loadView() {
         view = cameraView
@@ -78,6 +115,26 @@ open class CameraViewController: UIViewController, CameraControllerUIDelegate {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
         setup()
+        
+        // Add countdown label to view
+        view.addSubview(countdownLabel)
+        countdownLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            countdownLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            countdownLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            countdownLabel.widthAnchor.constraint(equalToConstant: 100),
+            countdownLabel.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        
+        // Add recording indicator
+        view.addSubview(recordingIndicator)
+        recordingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            recordingIndicator.topAnchor.constraint(equalTo: countdownLabel.bottomAnchor, constant: 8),
+            recordingIndicator.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            recordingIndicator.widthAnchor.constraint(equalToConstant: 50),
+            recordingIndicator.heightAnchor.constraint(equalToConstant: 24)
+        ])
     }
 
     override open func viewDidAppear(_ animated: Bool) {
@@ -127,6 +184,10 @@ open class CameraViewController: UIViewController, CameraControllerUIDelegate {
 
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     // MARK: Overridable Helper
@@ -179,6 +240,24 @@ open class CameraViewController: UIViewController, CameraControllerUIDelegate {
 
         if !(selectedItem is EmptyItem) {
             lensPickerView.selectItem(selectedItem)
+        } else if !lenses.isEmpty {
+            // Auto-select the first lens when lenses are loaded
+            autoSelectFirstLens(lenses: lenses)
+        }
+    }
+    
+    /// Automatically selects the first lens in the list
+    private func autoSelectFirstLens(lenses: [Lens]) {
+        // Only auto-select the first lens once to avoid re-applying on subsequent lens updates
+        guard !hasAutoSelectedFirstLens, let firstLens = lenses.first else { return }
+        
+        hasAutoSelectedFirstLens = true
+        print("Auto-selecting first lens: \(firstLens.name ?? "Unnamed") (\(firstLens.id))")
+        applyLens(firstLens)
+        
+        // Update the lens picker selection to match
+        if let firstItem = itemsForLensPickerView(lensPickerView).first {
+            lensPickerView.selectItem(firstItem)
         }
     }
 
@@ -245,6 +324,77 @@ extension CameraViewController {
         setupActions()
         cameraController.cameraKit.add(output: cameraView.previewView)
         cameraController.uiDelegate = self
+        
+        // Register for lens capture trigger notifications
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleCaptureTrigger(_:)),
+            name: NSNotification.Name("TriggerCapture"),
+            object: nil
+        )
+    }
+    
+    /// Handle capture triggers from lens
+    @objc private func handleCaptureTrigger(_ notification: Notification) {
+        // Cek apakah sedang dalam proses recording
+        if isRecording {
+            print("Cannot capture photo while recording is in progress")
+            return
+        }
+        
+        if let userInfo = notification.userInfo {
+            let captureType = userInfo["type"] as? String ?? "photo"
+            print("Handling capture trigger from lens: \(captureType)")
+            
+            if captureType == "photo" {
+                // Trigger photo capture dengan memanggil cameraButtonTapped
+                cameraButtonTapped(cameraView.cameraButton)
+            } else if captureType == "video" {
+                // Ambil durasi video dari permintaan lens, default 10 detik jika tidak ada
+                let durationString = userInfo["duration"] as? String
+                let duration = TimeInterval(durationString ?? "10.0") ?? 10.0
+                
+                // Pastikan durasi berada dalam batasan yang wajar (antara 3-30 detik)
+                let finalDuration = min(max(duration, 3.0), 30.0)
+                
+                print("Received video recording request with duration: \(finalDuration) seconds")
+                
+                // Set max recording duration from userInfo
+                maxRecordingDuration = finalDuration
+                
+                // Merekam video statis dengan durasi yang ditentukan oleh lens
+                recordFixedDurationVideo(duration: finalDuration)
+            }
+        }
+    }
+
+    /// Merekam video dengan durasi tetap dan tidak dapat dihentikan
+    private func recordFixedDurationVideo(duration: TimeInterval) {
+        // Hanya memulai perekaman jika belum sedang merekam
+        if !isRecording {
+            print("Starting fixed duration video recording for \(duration) seconds")
+            
+            // Mulai perekaman
+            cameraButtonHoldBegan(cameraView.cameraButton)
+            
+            // Nonaktifkan interaksi pengguna pada tombol kamera selama perekaman berlangsung
+            cameraView.cameraButton.isUserInteractionEnabled = false
+            
+            // Jadwalkan waktu untuk menghentikan perekaman secara otomatis
+            DispatchQueue.main.asyncAfter(deadline: .now() + duration) { [weak self] in
+                guard let self = self else { return }
+                
+                // Hentikan perekaman
+                self.cameraButtonHoldEnded(self.cameraView.cameraButton)
+                
+                // Aktifkan kembali interaksi pengguna
+                self.cameraView.cameraButton.isUserInteractionEnabled = true
+                
+                print("Fixed duration video recording completed")
+            }
+        } else {
+            print("Already recording, ignoring trigger")
+        }
     }
 
     /// Configures the target actions and delegates needed for the view controller to function
@@ -271,7 +421,7 @@ extension CameraViewController {
         lensPickerView.dataSource = self
         lensPickerView.performInitialSelection()
 
-        cameraView.cameraButton.delegate = self
+        self.cameraView.cameraButton.delegate = self
         cameraView.cameraButton.allowWhileRecording = [doubleTap, pinchGestureRecognizer]
     }
 
@@ -286,6 +436,7 @@ extension CameraViewController {
     @objc private func closeButtonPressed(_ sender: UIButton) {
         clearLens()
         lensPickerView.selectItem(EmptyItem())
+        hasAutoSelectedFirstLens = false // Reset flag so we can auto-select again if lenses are updated
     }
 
 }
@@ -423,7 +574,8 @@ extension CameraViewController: LensPickerViewControllerDelegate, LensPickerView
             UIView.animate(withDuration: 0.3, animations: {
                 self.cameraView.frame = self.smallFrameSize
                 self.cameraView.previewView.layer.cornerRadius = 12
-                self.cameraView.updateFlipButton(isInFullScreen: false)
+                self.cameraView.fullFrameFlipCameraButton.isHidden = true
+                self.cameraView.smallFrameFlipCameraButton.isHidden = true
 
                 self.view.layoutIfNeeded()
             })
@@ -437,13 +589,14 @@ extension CameraViewController: LensPickerViewControllerDelegate, LensPickerView
             UIView.animate(withDuration: 0.3, animations: {
                 self.cameraView.frame = self.fullFrameSize
                 self.cameraView.previewView.layer.cornerRadius = 0
-                self.cameraView.updateFlipButton(isInFullScreen: true)
+                self.cameraView.fullFrameFlipCameraButton.isHidden = true
+                self.cameraView.smallFrameFlipCameraButton.isHidden = true
 
                 self.view.layoutIfNeeded()
             })
 
             self.cameraView.clearLensView.isHidden = self.cameraController.currentLens == nil
-            self.cameraView.cameraButton.isHidden = false
+            self.cameraView.cameraButton.isHidden = true
             self.cameraView.lensPickerButton.isHidden = false
             cameraView.snapWatermark.isHidden = false
 
@@ -474,18 +627,52 @@ extension CameraViewController: CameraButtonDelegate {
     }
 
     public func cameraButtonHoldBegan(_ cameraButton: CameraButton) {
+        // Cek apakah sudah ada recording yang sedang berlangsung
+        guard !isRecording else {
+            print("Already recording, ignoring trigger")
+            return
+        }
+        
         print("Start recording")
+        isRecording = true
         cameraController.startRecording()
         appOrientationDelegate?.lockOrientation(currentInterfaceOrientationMask)
+        
+        // Start countdown
+        recordingDuration = maxRecordingDuration
+        countdownLabel.isHidden = false
+        recordingIndicator.isHidden = false
+        updateCountdownLabel()
+        
+        // Start blinking REC indicator
+        blinkTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            self?.recordingIndicator.alpha = self?.recordingIndicator.alpha == 1.0 ? 0.3 : 1.0
+        }
+        
+        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.recordingDuration -= 1
+            self.updateCountdownLabel()
+        }
     }
 
     public func cameraButtonHoldCancelled(_ cameraButton: CameraButton) {
+        // Pastikan ada recording yang sedang berlangsung sebelum membatalkan
+        guard isRecording else { return }
+        
+        isRecording = false
         cameraController.cancelRecording()
+        stopCountdown()
         restoreActiveCameraState()
     }
 
     public func cameraButtonHoldEnded(_ cameraButton: CameraButton) {
+        // Pastikan ada recording yang sedang berlangsung sebelum mengakhiri
+        guard isRecording else { return }
+        
         print("Finish recording")
+        isRecording = false
+        stopCountdown()
         cameraController.finishRecording { url, error in
             DispatchQueue.main.async {
                 guard let url = url else { return }
@@ -500,6 +687,21 @@ extension CameraViewController: CameraButtonDelegate {
                 }
             }
         }
+    }
+    
+    private func stopCountdown() {
+        countdownTimer?.invalidate()
+        countdownTimer = nil
+        blinkTimer?.invalidate()
+        blinkTimer = nil
+        countdownLabel.isHidden = true
+        recordingIndicator.isHidden = true
+    }
+    
+    private func updateCountdownLabel() {
+        let minutes = Int(recordingDuration) / 60
+        let seconds = Int(recordingDuration) % 60
+        countdownLabel.text = String(format: "%02d:%02d", minutes, seconds)
     }
 
     private func restoreActiveCameraState() {

@@ -15,6 +15,7 @@ class CatFactRemoteApiServiceProvider: NSObject, LensRemoteApiServiceProvider {
     var supportedApiSpecIds: Set<String> = ["03d765c5-20bd-4495-9a27-30629649cf57"]
 
     func remoteApiService(for lens: Lens) -> LensRemoteApiService {
+        print("[CatFactRemoteApiServiceProvider] Creating new remote API service for lens: \(lens.id)")
         return CatFactRemoteApiService()
     }
 }
@@ -32,11 +33,22 @@ class CatFactRemoteApiService: NSObject, LensRemoteApiService {
         _ request: LensRemoteApiRequest,
         responseHandler: @escaping (LensRemoteApiServiceCallStatus, LensRemoteApiResponseProtocol) -> Void
     ) -> LensRemoteApiServiceCall {
+        print("[CatFactRemoteApiService] Processing request for endpoint: \(request.endpointId)")
+        
         guard let url = url(request: request) else {
+            print("[CatFactRemoteApiService] Failed to create URL for request")
             return IgnoredRemoteApiServiceCall()
         }
+        
+        print("[CatFactRemoteApiService] Making request to URL: \(url.absoluteString)")
 
         let task = urlSession.dataTask(with: url) { data, urlResponse, error in
+            if let error = error {
+                print("[CatFactRemoteApiService] Request failed with error: \(error.localizedDescription)")
+            } else {
+                print("[CatFactRemoteApiService] Request completed successfully")
+            }
+            
             let apiResponse = LensRemoteApiResponse(
                 request: request,
                 status: error != nil ? .badRequest : .success,
@@ -47,6 +59,7 @@ class CatFactRemoteApiService: NSObject, LensRemoteApiService {
         }
 
         task.resume()
+        print("[CatFactRemoteApiService] Request task started")
 
         return URLRequestRemoteApiServiceCall(task: task)
     }
@@ -56,32 +69,34 @@ class CatFactRemoteApiService: NSObject, LensRemoteApiService {
         components.host = Constants.host
         components.path = "/" + request.endpointId
         components.scheme = Constants.scheme
-        return components.url
+        let url = components.url
+        print("[CatFactRemoteApiService] Generated URL: \(url?.absoluteString ?? "nil")")
+        return url
     }
-
 }
 
 class URLRequestRemoteApiServiceCall: NSObject, LensRemoteApiServiceCall {
 
     let task: URLSessionDataTask
-
     let status: LensRemoteApiServiceCallStatus = .ongoing
 
     init(task: URLSessionDataTask) {
         self.task = task
         super.init()
+        print("[URLRequestRemoteApiServiceCall] Initialized with task")
     }
 
     func cancelRequest() {
+        print("[URLRequestRemoteApiServiceCall] Cancelling request")
         task.cancel()
     }
-
 }
 
 class IgnoredRemoteApiServiceCall: NSObject, LensRemoteApiServiceCall {
     let status: LensRemoteApiServiceCallStatus = .ignored
 
     func cancelRequest() {
+        print("[IgnoredRemoteApiServiceCall] Cancel request called (no-op)")
         // no-op
     }
 }
