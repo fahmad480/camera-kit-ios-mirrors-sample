@@ -22,7 +22,8 @@ class CaptureRemoteApiService: NSObject, LensRemoteApiService {
     ) -> LensRemoteApiServiceCall {
         
         // Check if we can parse the body as JSON
-        if let jsonDict = try? JSONSerialization.jsonObject(with: request.body) as? [String: Any] {
+        // if let jsonDict = try? JSONSerialization.jsonObject(with: request.body) as? [String: Any] {
+        if let jsonDict = request.parameters as? [String: Any] {
             // Body can be parsed as JSON
             let captureType = jsonDict["type"] as? String
             
