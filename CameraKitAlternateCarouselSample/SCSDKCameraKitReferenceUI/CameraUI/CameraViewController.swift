@@ -72,6 +72,40 @@ open class CameraViewController: UIViewController, CameraControllerUIDelegate {
     public var smallFrameSize = CGRect(x: 0, y: 0, width: 203, height: 362)
 
     public var isInFullFrame = true
+    
+    /// Countdown label for video recording
+    private let countdownLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.backgroundColor = UIColor(white: 0, alpha: 0.5)
+        label.textAlignment = .center
+        label.layer.cornerRadius = 8
+        label.clipsToBounds = true
+        label.isHidden = true
+        return label
+    }()
+    
+    /// Recording indicator label
+    private let recordingIndicator: UILabel = {
+        let label = UILabel()
+        label.text = "REC"
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.backgroundColor = .red
+        label.textAlignment = .center
+        label.layer.cornerRadius = 4
+        label.clipsToBounds = true
+        label.isHidden = true
+        return label
+    }()
+    
+    /// Timer for countdown
+    private var countdownTimer: Timer?
+    private var recordingDuration: TimeInterval = 0
+    private var blinkTimer: Timer?
+    private var maxRecordingDuration: TimeInterval = 0 // Will be set from userInfo
+    private var isRecording: Bool = false // Flag untuk melacak status recording
 
     override open func loadView() {
         view = cameraView
@@ -81,6 +115,26 @@ open class CameraViewController: UIViewController, CameraControllerUIDelegate {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
         setup()
+        
+        // Add countdown label to view
+        view.addSubview(countdownLabel)
+        countdownLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            countdownLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            countdownLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            countdownLabel.widthAnchor.constraint(equalToConstant: 100),
+            countdownLabel.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        
+        // Add recording indicator
+        view.addSubview(recordingIndicator)
+        recordingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            recordingIndicator.topAnchor.constraint(equalTo: countdownLabel.bottomAnchor, constant: 8),
+            recordingIndicator.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            recordingIndicator.widthAnchor.constraint(equalToConstant: 50),
+            recordingIndicator.heightAnchor.constraint(equalToConstant: 24)
+        ])
     }
 
     override open func viewDidAppear(_ animated: Bool) {
@@ -282,6 +336,12 @@ extension CameraViewController {
     
     /// Handle capture triggers from lens
     @objc private func handleCaptureTrigger(_ notification: Notification) {
+        // Cek apakah sedang dalam proses recording
+        if isRecording {
+            print("Cannot capture photo while recording is in progress")
+            return
+        }
+        
         if let userInfo = notification.userInfo {
             let captureType = userInfo["type"] as? String ?? "photo"
             print("Handling capture trigger from lens: \(captureType)")
@@ -299,6 +359,9 @@ extension CameraViewController {
                 
                 print("Received video recording request with duration: \(finalDuration) seconds")
                 
+                // Set max recording duration from userInfo
+                maxRecordingDuration = finalDuration
+                
                 // Merekam video statis dengan durasi yang ditentukan oleh lens
                 recordFixedDurationVideo(duration: finalDuration)
             }
@@ -308,7 +371,7 @@ extension CameraViewController {
     /// Merekam video dengan durasi tetap dan tidak dapat dihentikan
     private func recordFixedDurationVideo(duration: TimeInterval) {
         // Hanya memulai perekaman jika belum sedang merekam
-        if cameraController.recorder == nil {
+        if !isRecording {
             print("Starting fixed duration video recording for \(duration) seconds")
             
             // Mulai perekaman
@@ -316,20 +379,6 @@ extension CameraViewController {
             
             // Nonaktifkan interaksi pengguna pada tombol kamera selama perekaman berlangsung
             cameraView.cameraButton.isUserInteractionEnabled = false
-            
-            // Tampilkan indikator timer atau pesan bahwa video sedang direkam
-            let feedbackLabel = UILabel()
-            feedbackLabel.text = "Recording video... (\(Int(duration))s)"
-            feedbackLabel.textColor = .white
-            feedbackLabel.backgroundColor = UIColor(white: 0, alpha: 0.7)
-            feedbackLabel.textAlignment = .center
-            feedbackLabel.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-            feedbackLabel.layer.cornerRadius = 8
-            feedbackLabel.clipsToBounds = true
-            feedbackLabel.tag = 9999  // Tag untuk referensi nanti
-            feedbackLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 40)
-            feedbackLabel.center = CGPoint(x: view.bounds.midX, y: view.bounds.maxY - 100)
-            view.addSubview(feedbackLabel)
             
             // Jadwalkan waktu untuk menghentikan perekaman secara otomatis
             DispatchQueue.main.asyncAfter(deadline: .now() + duration) { [weak self] in
@@ -340,11 +389,6 @@ extension CameraViewController {
                 
                 // Aktifkan kembali interaksi pengguna
                 self.cameraView.cameraButton.isUserInteractionEnabled = true
-                
-                // Hapus indikator timer
-                if let label = self.view.viewWithTag(9999) {
-                    label.removeFromSuperview()
-                }
                 
                 print("Fixed duration video recording completed")
             }
@@ -583,18 +627,52 @@ extension CameraViewController: CameraButtonDelegate {
     }
 
     public func cameraButtonHoldBegan(_ cameraButton: CameraButton) {
+        // Cek apakah sudah ada recording yang sedang berlangsung
+        guard !isRecording else {
+            print("Already recording, ignoring trigger")
+            return
+        }
+        
         print("Start recording")
+        isRecording = true
         cameraController.startRecording()
         appOrientationDelegate?.lockOrientation(currentInterfaceOrientationMask)
+        
+        // Start countdown
+        recordingDuration = maxRecordingDuration
+        countdownLabel.isHidden = false
+        recordingIndicator.isHidden = false
+        updateCountdownLabel()
+        
+        // Start blinking REC indicator
+        blinkTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            self?.recordingIndicator.alpha = self?.recordingIndicator.alpha == 1.0 ? 0.3 : 1.0
+        }
+        
+        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.recordingDuration -= 1
+            self.updateCountdownLabel()
+        }
     }
 
     public func cameraButtonHoldCancelled(_ cameraButton: CameraButton) {
+        // Pastikan ada recording yang sedang berlangsung sebelum membatalkan
+        guard isRecording else { return }
+        
+        isRecording = false
         cameraController.cancelRecording()
+        stopCountdown()
         restoreActiveCameraState()
     }
 
     public func cameraButtonHoldEnded(_ cameraButton: CameraButton) {
+        // Pastikan ada recording yang sedang berlangsung sebelum mengakhiri
+        guard isRecording else { return }
+        
         print("Finish recording")
+        isRecording = false
+        stopCountdown()
         cameraController.finishRecording { url, error in
             DispatchQueue.main.async {
                 guard let url = url else { return }
@@ -609,6 +687,21 @@ extension CameraViewController: CameraButtonDelegate {
                 }
             }
         }
+    }
+    
+    private func stopCountdown() {
+        countdownTimer?.invalidate()
+        countdownTimer = nil
+        blinkTimer?.invalidate()
+        blinkTimer = nil
+        countdownLabel.isHidden = true
+        recordingIndicator.isHidden = true
+    }
+    
+    private func updateCountdownLabel() {
+        let minutes = Int(recordingDuration) / 60
+        let seconds = Int(recordingDuration) % 60
+        countdownLabel.text = String(format: "%02d:%02d", minutes, seconds)
     }
 
     private func restoreActiveCameraState() {
