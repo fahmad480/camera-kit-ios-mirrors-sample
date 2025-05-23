@@ -9,7 +9,7 @@ import SCSDKCreativeKit
 class AppDelegate: UIResponder, UIApplicationDelegate, SnapchatDelegate {
 
     private enum Constants {
-        static let partnerGroupId = "88ce627d-3695-477d-a41f-6df57401329b" // 845fe30b-b436-42a7-be3c-2da1c3390aa6
+        static let partnerGroupId = "845fe30b-b436-42a7-be3c-2da1c3390aa6" // 845fe30b-b436-42a7-be3c-2da1c3390aa6
     }
 
     var window: UIWindow?
