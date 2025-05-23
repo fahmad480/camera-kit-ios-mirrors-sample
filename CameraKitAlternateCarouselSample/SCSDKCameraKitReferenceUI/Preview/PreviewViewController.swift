@@ -122,8 +122,9 @@ public class PreviewViewController: UIViewController {
 
     @objc private func handleEscapeKey(_ sender: UIKeyCommand) {
         if qrCodeImageView.isHidden == false {
-            // If QR code is visible, close it
+            // If QR code is visible, close it and the preview
             qrCodeCloseButtonPressed(qrCodeCloseButton)
+            closeButtonPressed(closeButton)
         } else {
             // Otherwise, act as cancel button
             cancelButtonPressed(cancelButton)
@@ -141,6 +142,7 @@ public class PreviewViewController: UIViewController {
                 closeButtonPressed(closeButton)
             } else if focused == qrCodeCloseButton {
                 qrCodeCloseButtonPressed(qrCodeCloseButton)
+                closeButtonPressed(closeButton)
             }
         } else {
             // If no button is focused, focus the upload button
@@ -267,6 +269,7 @@ extension PreviewViewController {
         qrCodeCloseButton.isHidden = true
         overlayView.isHidden = true
         uploadButtonStackView.isHidden = false
+        closeButtonPressed(closeButton)
     }
     
     func showQRCode(_ qrCodeImage: UIImage) {
