@@ -10,6 +10,14 @@ public class PreviewViewController: UIViewController {
     /// Callback when user presses close button and dismisses preview view controller
     public var onDismiss: (() -> Void)?
 
+    /// Currently focused button
+    private var focusedButton: UIButton? {
+        didSet {
+            oldValue?.backgroundColor = .systemGray
+            focusedButton?.backgroundColor = .systemBlue
+        }
+    }
+
     // MARK: View Properties
 
     fileprivate let closeButton: UIButton = {
@@ -18,14 +26,14 @@ public class PreviewViewController: UIViewController {
         button.setImage(
             UIImage(named: "ck_close_x", in: BundleHelper.resourcesBundle, compatibleWith: nil), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-
+        button.backgroundColor = .systemGray
         return button
     }()
 
     fileprivate let uploadButton: UIButton = {
         let button = UIButton()
         button.setTitle("Upload", for: .normal)
-        button.backgroundColor = .systemBlue
+        button.backgroundColor = .systemGray
         button.layer.cornerRadius = 8
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -98,6 +106,46 @@ public class PreviewViewController: UIViewController {
         setupLoadingIndicator()
         setupOverlayView()
         setupQRCodeView()
+        
+        // Set initial focus
+        focusedButton = uploadButton
+    }
+
+    // MARK: Keyboard Commands
+    
+    public override var keyCommands: [UIKeyCommand]? {
+        return [
+            UIKeyCommand(input: UIKeyCommand.inputEscape, modifierFlags: [], action: #selector(handleEscapeKey(_:)), discoverabilityTitle: "Back/Cancel"),
+            UIKeyCommand(input: " ", modifierFlags: [], action: #selector(handleSpaceKey(_:)), discoverabilityTitle: "Select/Confirm")
+        ]
+    }
+
+    @objc private func handleEscapeKey(_ sender: UIKeyCommand) {
+        if qrCodeImageView.isHidden == false {
+            // If QR code is visible, close it
+            qrCodeCloseButtonPressed(qrCodeCloseButton)
+        } else {
+            // Otherwise, act as cancel button
+            cancelButtonPressed(cancelButton)
+        }
+    }
+
+    @objc private func handleSpaceKey(_ sender: UIKeyCommand) {
+        if let focused = focusedButton {
+            // Trigger the focused button's action
+            if focused == uploadButton {
+                uploadButtonPressed(uploadButton)
+            } else if focused == cancelButton {
+                cancelButtonPressed(cancelButton)
+            } else if focused == closeButton {
+                closeButtonPressed(closeButton)
+            } else if focused == qrCodeCloseButton {
+                qrCodeCloseButtonPressed(qrCodeCloseButton)
+            }
+        } else {
+            // If no button is focused, focus the upload button
+            focusedButton = uploadButton
+        }
     }
 
     // MARK: Overridable Actions
@@ -111,6 +159,7 @@ public class PreviewViewController: UIViewController {
         loadingIndicator.startAnimating()
         uploadButtonStackView.isHidden = true
         overlayView.isHidden = true
+        focusedButton = nil
     }
 
     func hideLoading() {
@@ -118,6 +167,7 @@ public class PreviewViewController: UIViewController {
         loadingIndicator.stopAnimating()
         uploadButtonStackView.isHidden = false
         overlayView.isHidden = true
+        focusedButton = uploadButton
     }
 }
 
@@ -225,5 +275,6 @@ extension PreviewViewController {
         qrCodeCloseButton.isHidden = false
         overlayView.isHidden = false
         uploadButtonStackView.isHidden = true
+        focusedButton = qrCodeCloseButton
     }
 }
